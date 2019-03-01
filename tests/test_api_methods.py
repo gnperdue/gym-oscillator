@@ -65,4 +65,4 @@ class TestAPIMethods(unittest.TestCase):
         self.assertAlmostEqual(observation[-2], 10.5)
         self.assertAlmostEqual(observation[-1], 0.01)
 
-        print(observation)
+        # print(observation)
