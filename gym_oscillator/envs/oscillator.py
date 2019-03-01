@@ -114,6 +114,8 @@ class MachineStateTextRecorder(object):
 
     def close(self):
         '''zip the log file'''
+        if not os.path.isfile(self.log_name):
+            return
         with open(self.log_name, 'rb') as f_in:
             with gzip.open(self.gzfile, 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
@@ -223,6 +225,7 @@ class OscillatorEnv(gym.Env):
         self.frq = np.pi * np.asarray([D1FRQ, D2FRQ, D3FRQ, D4FRQ],
                                       dtype=DTYPE)
         self.setting = 10.0
+        self.machine = None
         self.reset()
 
         self.action_space = spaces.Discrete(len(DEFAULT_COMMANDS))
@@ -240,6 +243,8 @@ class OscillatorEnv(gym.Env):
         return observation, reward, False, {}
 
     def reset(self):
+        if self.machine is not None:
+            self.machine.close_logger()
         data_generator = DataGenerator(self.amp, self.frq)
         noise_generator = NoiseModel()
         recorder_log = log_namer()
@@ -251,3 +256,6 @@ class OscillatorEnv(gym.Env):
 
     def render(self, mode='human', close=False):
         pass
+
+    def close(self):
+        self.machine.close_logger()
