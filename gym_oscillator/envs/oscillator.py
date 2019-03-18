@@ -253,6 +253,9 @@ class OscillatorEnv(gym.Env):
             setting=self.setting, data_generator=data_generator,
             noise_model=noise_generator, logger=recorder
         )
+        data = self.machine.step()
+        observation = data[:-1]
+        return observation
 
     def render(self, mode='human', close=False):
         pass
