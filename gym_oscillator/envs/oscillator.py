@@ -37,7 +37,9 @@ class DataGenerator(object):
     # frq = np.pi * np.asarray([D1FRQ, D2FRQ, D3FRQ, D4FRQ], dtype=DTYPE)
 
     def __init__(self, amplitudes, frequencies, time_step=0.01):
-        self.t = -20.0 * time_step
+        # -21 because 20 steps compose a full observation. we want to init to
+        # -1 so `env.reset()` ticks forward to t==0
+        self.t = -21.0 * time_step
         self.time_step = time_step
         self.amp = amplitudes
         self.frq = frequencies
