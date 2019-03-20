@@ -30,7 +30,8 @@ class TestAPIMethods(unittest.TestCase):
         self.assertFalse(done)
         self.assertEqual(len(observation), 82)
         self.assertNotEqual(reward, 0.0)
-        self.env.reset()
+        _ = self.env.reset()
+        # just don't crash when we call `render()`
         self.env.render()
         self.env.close()
 
@@ -45,7 +46,9 @@ class TestAPIMethods(unittest.TestCase):
         observation, reward, done, d = self.env.step(4)
         self.assertAlmostEqual(observation[-2], 10.0)
         self.assertAlmostEqual(observation[-1], 0.03)
-        self.env.reset()
+        observation = self.env.reset()
+        self.assertAlmostEqual(observation[-2], 10.0)
+        self.assertAlmostEqual(observation[-1], 0.00)
         observation, reward, done, d = self.env.step(4)
         self.assertAlmostEqual(observation[-2], 10.0)
         self.assertAlmostEqual(observation[-1], 0.01)
@@ -55,12 +58,14 @@ class TestAPIMethods(unittest.TestCase):
         self.assertAlmostEqual(observation[-2], 10.0)
         self.assertAlmostEqual(observation[-1], 0.01)
 
-        self.env.reset()
+        observation = self.env.reset()
+        self.assertAlmostEqual(observation[-1], 0.00)
         observation, reward, done, d = self.env.step(0)
         self.assertAlmostEqual(observation[-2], 9.5)
         self.assertAlmostEqual(observation[-1], 0.01)
 
-        self.env.reset()
+        observation = self.env.reset()
+        self.assertAlmostEqual(observation[-1], 0.00)
         observation, reward, done, d = self.env.step(8)
         self.assertAlmostEqual(observation[-2], 10.5)
         self.assertAlmostEqual(observation[-1], 0.01)
