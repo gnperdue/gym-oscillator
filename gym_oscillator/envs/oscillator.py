@@ -241,7 +241,7 @@ class OscillatorEnv(gym.Env):
         self.machine.update_machine(action)
         data = self.machine.step()
         observation = data[:-1]
-        reward = data[-1]  # heat
+        reward = -1 * data[-1]  # heat
         return observation, reward, False, {}
 
     def reset(self):
