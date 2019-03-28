@@ -14,7 +14,6 @@ class TestAPIMethods(unittest.TestCase):
     def setUp(self):
         np.random.seed(0)
         self.env = envs.make('oscillator-v0')
-        pass
 
     def tearDown(self):
         pass
