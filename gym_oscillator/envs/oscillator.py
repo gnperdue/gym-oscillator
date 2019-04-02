@@ -217,6 +217,9 @@ class OscillatorEnv(gym.Env):
     are included. Heat is instantaneous though, so there is no penalty for a
     "bad" setting before step=0.
 
+    Episode termination occurs when cumulative heat reaches a threshold of
+    -100,000 (heat is negative here).
+
     Steps adjust the device setting prior to sensor readout.
     '''
     metadata = {'render.modes': ['human']}
@@ -228,6 +231,8 @@ class OscillatorEnv(gym.Env):
                                       dtype=DTYPE)
         self.setting = 10.0
         self.machine = None
+        self.cumulative_heat = 0.0  # will be a negative number
+        self.cumulative_heat_threshold = -1e5
         self.reset()
 
         self.action_space = spaces.Discrete(len(DEFAULT_COMMANDS))
@@ -242,7 +247,11 @@ class OscillatorEnv(gym.Env):
         data = self.machine.step()
         observation = data[:-1]
         reward = -1 * data[-1]  # heat
-        return observation, reward, False, {}
+        self.cumulative_heat = self.cumulative_heat + reward
+        done_flag = False
+        if self.cumulative_heat < self.cumulative_heat_threshold:
+            done_flag = True
+        return observation, reward, done_flag, {}
 
     def reset(self):
         if self.machine is not None:
