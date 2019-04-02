@@ -233,6 +233,9 @@ class OscillatorEnv(gym.Env):
         self.machine = None
         self.cumulative_heat = 0.0  # will be a negative number
         self.cumulative_heat_threshold = -1e5
+        self.ts = []
+        self.sensors_sums = []
+        self.settings = []
         self.reset()
 
         self.action_space = spaces.Discrete(len(DEFAULT_COMMANDS))
@@ -248,6 +251,9 @@ class OscillatorEnv(gym.Env):
         observation = data[:-1]
         reward = -1 * data[-1]  # heat
         self.cumulative_heat = self.cumulative_heat + reward
+        self.ts.append(observation[-1])
+        self.sensors_sums.append(sum(observation[-6:-2]))
+        self.settings.append(observation[-2])
         done_flag = False
         if self.cumulative_heat < self.cumulative_heat_threshold:
             done_flag = True
@@ -269,7 +275,22 @@ class OscillatorEnv(gym.Env):
         return observation
 
     def render(self, mode='human', close=False):
-        pass
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            print('Matplotlib is required to render this env.')
+            pass
+        fig = plt.Figure(figsize=(10, 6))
+        gs = plt.GridSpec(1, 2)
+        ax1 = plt.subplot(gs[0])
+        ax1.scatter(self.ts, self.sensors_sums, c='r')
+        ax1.set_title('sensors sums')
+        ax2 = plt.subplot(gs[1])
+        ax2.scatter(self.ts, self.settings, c='k')
+        ax2.set_title('settings')
+        fig.tight_layout()
+        plt.savefig('/tmp/tmp.pdf', bbox_inches='tight')
+        plt.show()
 
     def close(self):
         self.machine.close_logger()

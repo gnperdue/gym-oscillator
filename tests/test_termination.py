@@ -22,3 +22,4 @@ class TestTermination(unittest.TestCase):
         self.assertFalse(done)
         while not done:
             observation, reward, done, d = self.env.step(4)
+        self.env.render()
