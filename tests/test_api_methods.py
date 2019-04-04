@@ -2,11 +2,9 @@ import unittest
 
 import numpy as np
 
-# import gym
 from gym import envs
 from gym import spaces
 import gym_oscillator
-# import gym_oscillator.envs.oscillator as oscillator
 
 
 class TestAPIMethods(unittest.TestCase):
@@ -31,7 +29,7 @@ class TestAPIMethods(unittest.TestCase):
         self.assertNotEqual(reward, 0.0)
         _ = self.env.reset()
         # just don't crash when we call `render()`
-        self.env.render()
+        f = self.env.render(mode='return_figure')
         self.env.close()
 
     def test_multi_step(self):

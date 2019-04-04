@@ -222,7 +222,7 @@ class OscillatorEnv(gym.Env):
 
     Steps adjust the device setting prior to sensor readout.
     '''
-    metadata = {'render.modes': ['human']}
+    metadata = {'render.modes': ['human', 'return_figure']}
 
     # TODO - we can pass params, see Atari example for usage pattern
     def __init__(self):
@@ -289,8 +289,14 @@ class OscillatorEnv(gym.Env):
         ax2.scatter(self.ts, self.settings, c='k')
         ax2.set_title('settings')
         fig.tight_layout()
-        plt.savefig('/tmp/tmp.pdf', bbox_inches='tight')
-        plt.show()
+        if mode == 'human':
+            # plt.savefig('/tmp/tmp.pdf', bbox_inches='tight')
+            plt.show(block=False)
+            if close:
+                # plt.pause(1)
+                plt.close()
+        else:
+            return fig
 
     def close(self):
         self.machine.close_logger()
