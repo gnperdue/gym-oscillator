@@ -231,8 +231,8 @@ class OscillatorEnv(gym.Env):
                                       dtype=DTYPE)
         self.setting = 10.0
         self.machine = None
-        self.cumulative_heat = 0.0  # will be a negative number
         self.cumulative_heat_threshold = -1e5
+        self.episode_steps_max = 2000
         self.reset()
 
         self.action_space = spaces.Discrete(len(DEFAULT_COMMANDS))
@@ -248,15 +248,19 @@ class OscillatorEnv(gym.Env):
         observation = data[:-1]
         reward = -1 * data[-1]  # heat
         self.cumulative_heat = self.cumulative_heat + reward
+        self.episode_steps += 1
         self.ts.append(observation[-1])
         self.sensors_sums.append(sum(observation[-6:-2]))
         self.settings.append(observation[-2])
         done_flag = False
-        if self.cumulative_heat < self.cumulative_heat_threshold:
+        if (self.cumulative_heat < self.cumulative_heat_threshold) or \
+           (self.episode_steps >= self.episode_steps_max):
             done_flag = True
         return observation, reward, done_flag, {}
 
     def reset(self):
+        self.episode_steps = 0
+        self.cumulative_heat = 0.0  # will be a negative number
         self.ts = []
         self.sensors_sums = []
         self.settings = []
