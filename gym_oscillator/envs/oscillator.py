@@ -233,9 +233,6 @@ class OscillatorEnv(gym.Env):
         self.machine = None
         self.cumulative_heat = 0.0  # will be a negative number
         self.cumulative_heat_threshold = -1e5
-        self.ts = []
-        self.sensors_sums = []
-        self.settings = []
         self.reset()
 
         self.action_space = spaces.Discrete(len(DEFAULT_COMMANDS))
@@ -260,6 +257,9 @@ class OscillatorEnv(gym.Env):
         return observation, reward, done_flag, {}
 
     def reset(self):
+        self.ts = []
+        self.sensors_sums = []
+        self.settings = []
         if self.machine is not None:
             self.machine.close_logger()
         data_generator = DataGenerator(self.amp, self.frq)
