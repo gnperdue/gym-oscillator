@@ -1,5 +1,6 @@
 import os
 import unittest
+import tempfile
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,7 +10,14 @@ from gym import envs
 import gym_oscillator
 
 
-PLOT_NAME = '/tmp/tmp.pdf'
+# PLOT_NAME = '/tmp/tmp.pdf'
+# Handle Windows (Win) or Mac path for temp log file
+tempdir = tempfile.gettempdir();
+slash2 = '\\';  # specific to Windows
+bstr = str.find(tempdir, slash2); # check if double slash (Win) or not (Mac)
+log_str ='\\tmp.pdf' if bstr > 0 else '/tmp.pdf'; # create log-file string
+
+PLOT_NAME = tempdir + log_str;
 
 
 class TestTermination(unittest.TestCase):
