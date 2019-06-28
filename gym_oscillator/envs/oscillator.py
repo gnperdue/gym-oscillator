@@ -42,8 +42,8 @@ class DataGenerator(object):
         # -1 so `env.reset()` ticks forward to t==0
         self.t = -21.0 * time_step
         self.time_step = time_step
-        self.amp = amplitudes
-        self.frq = frequencies
+        self.amp = np.array(amplitudes)
+        self.frq = np.array(frequencies)
         assert len(self.amp) == len(self.frq)
 
     def _gen_point(self):
@@ -207,10 +207,10 @@ class SimulationMachine(object):
 
 def log_namer():
     # Handle Windows (Win) or Mac path for temp log file
-    tempdir = tempfile.gettempdir();
-    slash2 = '\\'; # specific to Win
-    bstr = str.find(tempdir, slash2); # check if double slash (Win) or not (Mac);
-    log_str = '\\log' if bstr > 0 else '/log'; # create log file strong;
+    tempdir = tempfile.gettempdir()
+    slash2 = '\\'  # specific to Win
+    bstr = str.find(tempdir, slash2)  # check if double slash (Win) or not (Mac)
+    log_str = '\\log' if bstr > 0 else '/log'  # create log file strong;
 
     opts = list(map(str, range(1, 11))) + list(string.ascii_lowercase)
     return tempdir + log_str + \
