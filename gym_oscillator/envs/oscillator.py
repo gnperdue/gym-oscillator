@@ -44,13 +44,15 @@ class DataGenerator(object):
         self.time_step = time_step
         self.amp = np.array(amplitudes)
         self.frq = np.array(frequencies)
+        self.amplitude_scale = 1.0
         assert len(self.amp) == len(self.frq)
 
     def _gen_point(self):
         raw_vs = []
         for i in range(len(self.amp)):
             raw_vs.append(
-                self.amp[i] * np.cos(self.frq[i] * self.t)
+                self.amplitude_scale * self.amp[i]
+                * np.cos(self.frq[i] * self.t)
             )
         return np.asarray(raw_vs, dtype=DTYPE)
 
@@ -58,6 +60,9 @@ class DataGenerator(object):
         self.t = self.t + self.time_step
         data = self._gen_point()
         return data
+
+    def update_amplitude_scale(self, scale):
+        self.amplitude_scale = scale
 
 
 class NoiseModel(object):
@@ -177,6 +182,10 @@ class SimulationMachine(object):
         for m in measured:
             self._observation.append(m)
         heat = self.get_heat()
+
+        # as machine gets hotter, amplitude increases
+        heat_scale = np.exp(np.abs(heat / MAX_HEAT))
+        self._data_generator.update_amplitude_scale(heat_scale)
 
         return_value = list(self._observation) + \
             [self._setting, self._data_generator.t, heat]
